@@ -80,9 +80,6 @@ class My_PDF_Plugin {
      * Include required files.
      */
     private function includes() {
-        // Include core classes
-        require_once MY_PDF_PLUGIN_PATH . 'includes/class-pdf-generator.php';
-        require_once MY_PDF_PLUGIN_PATH . 'includes/class-frontend-handler.php';
 
         // Check if TCPDF is available (to be added with Composer later)
         $tcpdf_available = false;
@@ -93,6 +90,10 @@ class My_PDF_Plugin {
 
         // Initialize components if dependencies are met
         if ( $tcpdf_available ) {
+            // Include core classes
+            require_once MY_PDF_PLUGIN_PATH . 'includes/class-pdf-generator.php';
+            require_once MY_PDF_PLUGIN_PATH . 'includes/class-frontend-handler.php';
+
             // Initialize PDF Generator
             $pdf_generator = new \MyPDFPlugin\PDF_Generator();
             

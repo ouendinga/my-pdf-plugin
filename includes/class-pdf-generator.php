@@ -25,7 +25,7 @@ use Exception;
  *
  * @since 1.0.0
  */
-class PDF_Generator {
+class PDF_Generator extends TCPDF {
 
 	/**
 	 * TCPDF instance.
@@ -91,16 +91,13 @@ class PDF_Generator {
 	 * @return boolean True on success, false on failure.
 	 */
 	public function init_tcpdf() {
-		// Check if TCPDF is already available.
+		// Ensure TCPDF is loaded.
 		if ( ! class_exists( 'TCPDF' ) ) {
-			// Try to load TCPDF from our plugin directory.
 			$tcpdf_path = plugin_dir_path( dirname( __FILE__ ) ) . 'vendor/tecnickcom/tcpdf/tcpdf.php';
-			
 			if ( file_exists( $tcpdf_path ) ) {
 				require_once $tcpdf_path;
 			} else {
-				$this->errors->add( 'tcpdf_missing', __( 'TCPDF library is not available.', 'my-pdf-plugin' ) );
-				return false;
+				throw new Exception( __( 'TCPDF library is not available. Please ensure it is installed in the vendor directory.', 'my-pdf-plugin' ) );
 			}
 		}
 
@@ -161,7 +158,7 @@ class PDF_Generator {
 	 * @param string $file    File path for saving when $output is 'F'.
 	 * @return mixed PDF content as string or true on success, WP_Error on failure.
 	 */
-	public function generate_from_post( $post_id, $output = 'I', $file = '' ) {
+	public function generate_from_post( $post_id ) {
 		// Verify post ID.
 		$post = get_post( $post_id );
 		if ( ! $post ) {
@@ -200,45 +197,42 @@ class PDF_Generator {
 			$meta .= sprintf( __( 'Published on %s by %s', 'my-pdf-plugin' ), $post_date, $author );
 			$meta .= '</div>';
 			
-			// Set footer callback.
-			$this->pdf->setFooterCallback( function( $pdf ) {
-				$pdf->SetY( -15 );
-				$pdf->SetFont( 'helvetica', 'I', 8 );
-				$pdf->Cell( 0, 10, $this->options['footer_text'] . ' | ' . __( 'Page', 'my-pdf-plugin' ) . ' ' . $pdf->getAliasNumPage() . '/' . $pdf->getAliasNbPages(), 0, false, 'C', 0, '', 0, false, 'T', 'M' );
-			} );
-			
 			// Write HTML content to PDF.
 			$this->pdf->writeHTML( $title . $meta . $content, true, false, true, false, '' );
 			
 			// Close and output PDF document.
-			switch ( $output ) {
-				case 'D': // Download.
-					$filename = sanitize_file_name( get_the_title( $post ) ) . '.pdf';
-					return $this->pdf->Output( $filename, 'D' );
+			if ( empty( $file ) ) {
+				// Generate the filename with the current date.
+				$current_date = date( 'd-m-Y_H-i-s' );
+				$file = WP_CONTENT_DIR . '/uploads/pdfs/' . sanitize_file_name( get_the_title( $post ) ) . '_' . $current_date . '.pdf';
 				
-				case 'F': // File.
-					if ( empty( $file ) ) {
-						$file = WP_CONTENT_DIR . '/uploads/pdfs/' . sanitize_file_name( get_the_title( $post ) ) . '.pdf';
-						
-						// Create directory if it doesn't exist.
-						$dir = dirname( $file );
-						if ( ! file_exists( $dir ) ) {
-							wp_mkdir_p( $dir );
-						}
-					}
-					return $this->pdf->Output( $file, 'F' );
-				
-				case 'S': // String.
-					return $this->pdf->Output( '', 'S' );
-				
-				case 'I': // Inline (default).
-				default:
-					$filename = sanitize_file_name( get_the_title( $post ) ) . '.pdf';
-					return $this->pdf->Output( $filename, 'I' );
+				// Create directory if it doesn't exist.
+				$dir = dirname( $file );
+				if ( ! file_exists( $dir ) ) {
+					wp_mkdir_p( $dir );
+				}
 			}
+			$this->pdf->Output( $file, 'F' );
+			return $file; // Explicitly return the file path;
 		} catch ( Exception $e ) {
 			return new WP_Error( 'pdf_generation_error', $e->getMessage() );
 		}
+	}
+
+	/**
+	 * Custom Footer
+	 *
+	 * Overrides the default TCPDF Footer method to add a custom footer.
+	 */
+	public function Footer() {
+		// Set the position at 15 mm from the bottom.
+		$this->SetY(-15);
+
+		// Set the font for the footer.
+		$this->SetFont('helvetica', 'I', 8);
+
+		// Add the footer text.
+		$this->Cell(0, 10, __('Page ') . $this->getAliasNumPage() . '/' . $this->getAliasNbPages(), 0, 0, 'C');
 	}
 
 	/**

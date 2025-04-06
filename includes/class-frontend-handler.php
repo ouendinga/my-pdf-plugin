@@ -234,23 +234,24 @@ class Frontend_Handler {
 	 * @return string URL to the generated PDF file.
 	 */
 	private function generate_pdf_file( $post ) {
-		// In a real implementation, this would:
-		// 1. Create an instance of PDF_Generator
-		// 2. Pass the post content to it
-		// 3. Generate the PDF file
-		// 4. Return the URL to the generated file
-		
-		// For now, this is just a placeholder that would be replaced by the actual implementation
+		// Check if the PDF_Generator class exists.
 		if ( ! class_exists( 'MyPDFPlugin\PDF_Generator' ) ) {
 			throw new Exception( __( 'PDF Generator is not available.', 'my-pdf-plugin' ) );
 		}
-		
-		// This is a placeholder - in real code, you would instantiate the PDF_Generator and use it
-		// $pdf_generator = new PDF_Generator();
-		// return $pdf_generator->generate_from_post( $post );
-		
-		// For demo purposes, return a mock URL
-		return esc_url( home_url( '/wp-content/uploads/pdfs/' . $post->ID . '.pdf' ) );
+
+		// Create an instance of the PDF_Generator class.
+		$pdf_generator = new PDF_Generator();
+
+		// Generate the PDF file using the post ID.
+		$pdf_file_path = $pdf_generator->generate_from_post( $post->ID );
+
+		// Check if the file was successfully generated.
+		if ( is_wp_error( $pdf_file_path ) || ! file_exists( $pdf_file_path ) ) {
+			throw new Exception( __( 'Failed to generate the PDF file.', 'my-pdf-plugin' ) );
+		}
+
+		// Return the URL to the generated PDF file.
+		return esc_url( str_replace( ABSPATH, home_url( '/' ), $pdf_file_path ) );
 	}
 }
 

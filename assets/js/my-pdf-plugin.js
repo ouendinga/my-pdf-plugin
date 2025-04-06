@@ -37,6 +37,8 @@
             $loadingIndicator.addClass('active');
             $button.addClass('disabled');
             $messageContainer.removeClass('success error').hide().empty();
+
+            console.log('Generating PDF for post ID:', postId); // Debugging line
             
             // Make AJAX request
             $.ajax({
@@ -48,6 +50,7 @@
                     nonce: nonce
                 },
                 success: function(response) {
+                    console.log('AJAX response:', response); // Debugging line
                     // Hide loading indicator
                     $loadingIndicator.removeClass('active');
                     $button.removeClass('disabled');
