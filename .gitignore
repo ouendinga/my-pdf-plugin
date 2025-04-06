@@ -1,0 +1,22 @@
+# Composer files
+/vendor/
+composer.lock
+
+# IDE and system files
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
+
+# WordPress specific ignores
+wp-config.php
+wp-content/uploads/
+wp-content/upgrade/
+wp-content/cache/
+wp-content/backups/
+
+# Logs and databases
+*.log
+*.sql
+*.sqlite
+

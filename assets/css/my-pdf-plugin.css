@@ -1,0 +1,101 @@
+/* 
+ * My PDF Plugin - Frontend Styles
+ * Styles for the Generate PDF button and loading indicator
+ */
+
+/* PDF Button Styles */
+.generate-pdf-button {
+    display: inline-block;
+    background-color: #0073aa;
+    color: #fff;
+    padding: 8px 16px;
+    border-radius: 4px;
+    font-size: 14px;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    border: none;
+    margin: 15px 0;
+}
+
+.generate-pdf-button:hover {
+    background-color: #005177;
+    color: #fff;
+}
+
+.generate-pdf-button:focus {
+    outline: thin dotted;
+    outline-offset: 2px;
+}
+
+.generate-pdf-button i {
+    margin-right: 5px;
+}
+
+/* Loading indicator */
+.pdf-loading-indicator {
+    display: none;
+    position: relative;
+    margin: 10px 0;
+    padding: 10px;
+    background-color: #f7f7f7;
+    border-radius: 4px;
+    text-align: center;
+}
+
+.pdf-loading-indicator.active {
+    display: block;
+}
+
+.pdf-spinner {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    margin-right: 10px;
+    border: 3px solid rgba(0, 115, 170, 0.2);
+    border-top-color: #0073aa;
+    border-radius: 50%;
+    animation: pdf-spinner 1s ease-in-out infinite;
+    vertical-align: middle;
+}
+
+@keyframes pdf-spinner {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* Success and error messages */
+.pdf-message {
+    padding: 10px 15px;
+    margin: 10px 0;
+    border-radius: 4px;
+    display: none;
+}
+
+.pdf-message.success {
+    background-color: #ecf7ed;
+    color: #28a745;
+    border-left: 4px solid #28a745;
+    display: block;
+}
+
+.pdf-message.error {
+    background-color: #f8d7da;
+    color: #dc3545;
+    border-left: 4px solid #dc3545;
+    display: block;
+}
+
+/* PDF Download link styles */
+.pdf-download-link {
+    display: inline-block;
+    margin-top: 10px;
+    color: #0073aa;
+    text-decoration: underline;
+}
+
+.pdf-download-link:hover {
+    color: #005177;
+}
+

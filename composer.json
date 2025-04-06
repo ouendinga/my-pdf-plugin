@@ -1,0 +1,23 @@
+{
+    "name": "ouendinga/my-pdf-plugin",
+    "description": "A WordPress plugin to generate PDF from post content",
+    "type": "wordpress-plugin",
+    "license": "GPL-2.0-or-later",
+    "authors": [
+        {
+            "name": "Álvaro Solís Pascual (ouendinga)",
+            "email": "ouendinga@example.com"
+        }
+    ],
+    "minimum-stability": "stable",
+    "require": {
+        "php": ">=7.4",
+        "tecnickcom/tcpdf": "^6.6"
+    },
+    "autoload": {
+        "psr-4": {
+            "MyPDFPlugin\\": "includes/"
+        }
+    }
+}
+
